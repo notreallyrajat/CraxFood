@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import ChefLoader from "../components/ChefLoader";
+import ShipLoader from "../components/ShipLoader";
 import styles from "./page.module.css";
 
 const MENU_DATA = [
@@ -191,7 +191,7 @@ export default function Home() {
   return (
     <>
       {isLoading ? (
-        <ChefLoader onComplete={() => setIsLoading(false)} duration={3500} />
+        <ShipLoader onComplete={() => setIsLoading(false)} duration={3500} />
       ) : (
         <div className={styles.mapContainer}>
           <div className={styles.bookWrapper}>
