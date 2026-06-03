@@ -14,35 +14,50 @@ const RUSH_MESSAGES = [
   "Catching falling ingredients in style..."
 ];
 
-export default function ChefLoader() {
+interface ChefLoaderProps {
+  onComplete?: () => void;
+  duration?: number; // In milliseconds
+}
+
+export default function ChefLoader({ onComplete, duration = 3500 }: ChefLoaderProps) {
   const [progress, setProgress] = useState(0);
   const [messageIndex, setMessageIndex] = useState(0);
+  const [textOpacity, setTextOpacity] = useState(1);
 
   useEffect(() => {
-    const cycleDuration = 3000; // 3 seconds per message cycle
-    const updateInterval = 30; // ms
-    const increment = (100 / cycleDuration) * updateInterval;
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      
+      // Calculate overall progress
+      const currentProgress = Math.min((elapsed / duration) * 100, 100);
+      setProgress(currentProgress);
 
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        let next = prev + increment;
-        if (next >= 100) {
-          next = 0;
-          setMessageIndex((idx) => (idx + 1) % RUSH_MESSAGES.length);
+      // Cycle message every 900ms
+      const messageCycleTime = 900;
+      const currentMessageIdx = Math.floor(elapsed / messageCycleTime) % RUSH_MESSAGES.length;
+      setMessageIndex(currentMessageIdx);
+
+      // Opacity fade in/out for each message cycle
+      const phase = elapsed % messageCycleTime;
+      let opacity = 1;
+      if (phase < 150) {
+        opacity = phase / 150; // Fade in
+      } else if (phase > 750) {
+        opacity = (messageCycleTime - phase) / 150; // Fade out
+      }
+      setTextOpacity(opacity);
+
+      if (elapsed >= duration) {
+        clearInterval(interval);
+        if (onComplete) {
+          onComplete();
         }
-        return next;
-      });
-    }, updateInterval);
+      }
+    }, 30);
 
-    return () => clearInterval(timer);
-  }, []);
-
-  // Calculate smooth fade opacity for the message based on the progress of the current cycle
-  const textOpacity = progress < 15 
-    ? progress / 15 
-    : progress > 85 
-      ? (100 - progress) / 15 
-      : 1;
+    return () => clearInterval(interval);
+  }, [duration, onComplete]);
 
   return (
     <div className={styles.loaderContainer}>
@@ -282,8 +297,7 @@ export default function ChefLoader() {
             <div
               className={styles.progressBar}
               style={{ 
-                width: `${progress}%`,
-                transition: "width 0.03s linear" 
+                width: `${progress}%`
               }}
             />
           </div>
