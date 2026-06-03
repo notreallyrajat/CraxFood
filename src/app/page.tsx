@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ChefLoader from "../components/ChefLoader";
 import styles from "./page.module.css";
 
@@ -47,11 +47,48 @@ const MENU_DATA = [
   }
 ];
 
+// Mr. Carter vector SVG component
+const MrCarter = () => (
+  <svg viewBox="0 0 100 100" className={styles.mrCarterSvg}>
+    {/* Body Skin & Ears */}
+    <circle cx="50" cy="50" r="22" fill="#fbd38d" stroke="#5c3d21" strokeWidth="2" />
+    <circle cx="26" cy="50" r="5" fill="#fbd38d" stroke="#5c3d21" strokeWidth="1.5" />
+    <circle cx="74" cy="50" r="5" fill="#fbd38d" stroke="#5c3d21" strokeWidth="1.5" />
+    
+    {/* Stripes (Sailor Shirt) */}
+    <path d="M 32 70 C 32 70 35 90 50 90 C 65 90 68 70 68 70 Z" fill="#ffffff" stroke="#5c3d21" strokeWidth="2" />
+    <path d="M 33 77 L 67 77 M 36 84 L 64 84" stroke="#1d4ed8" strokeWidth="3" />
+    
+    {/* Friendly Beard / Stubble */}
+    <path d="M 28 50 C 28 65 50 78 50 78 C 50 78 72 65 72 50 C 72 45 68 45 68 50 C 68 60 50 70 50 70 C 50 70 32 60 32 50 Z" fill="#5c3d21" />
+    
+    {/* Friendly Smile */}
+    <path d="M 43 56 Q 50 62 57 56" stroke="#5c3d21" strokeWidth="2" fill="none" strokeLinecap="round" />
+    
+    {/* Nose */}
+    <path d="M 48 48 Q 50 44 52 48" stroke="#5c3d21" strokeWidth="2" fill="none" strokeLinecap="round" />
+    
+    {/* Left Eye & Eyebrow */}
+    <ellipse cx="42" cy="42" rx="3.5" ry="2.5" fill="#3b2314" />
+    <path d="M 37 36 Q 42 33 47 36" stroke="#3b2314" strokeWidth="2" fill="none" strokeLinecap="round" />
+    
+    {/* Right Eye Patch (Classic Pirate Element) */}
+    <line x1="43" y1="36" x2="68" y2="48" stroke="#1e293b" strokeWidth="2.5" />
+    <polygon points="53,40 61,43 58,49 50,45" fill="#1e293b" stroke="#1e293b" strokeWidth="1" />
+    
+    {/* Pirate Hat (Tricorn Hat with gold trim) */}
+    <path d="M 20 32 C 30 20 70 20 80 32 C 72 38 60 32 50 38 C 40 32 28 38 20 32 Z" fill="#1e293b" stroke="#5c3d21" strokeWidth="2" />
+    <path d="M 20 32 C 30 14 70 14 80 32 C 50 14 50 14 20 32 Z" fill="#f59e0b" opacity="0.8" />
+    <circle cx="50" cy="24" r="3.5" fill="#ef4444" />
+  </svg>
+);
+
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [pageIndex, setPageIndex] = useState(0);
   const [cart, setCart] = useState<Record<string, boolean>>({});
   const [showDetails, setShowDetails] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<"idle" | "sailing" | "delivered">("idle");
 
   // Drag/Swipe coordinates refs
   const startX = useRef(0);
@@ -94,7 +131,7 @@ export default function Home() {
     }
   };
 
-  // Drag Gesture Handlers
+  // Drag/Swipe Handlers
   const handleDragStart = (clientX: number, clientY: number) => {
     startX.current = clientX;
     startY.current = clientY;
@@ -117,9 +154,7 @@ export default function Home() {
     const diffX = clientX - startX.current;
     const diffY = clientY - startY.current;
 
-    // REVERSED swipe gesture functionality for correct real paper page turn mapping:
-    // Dragging left (diffX < -50) -> Turns to next page
-    // Dragging right (diffX > 50) -> Turns to previous page
+    // Swipe Left -> Next | Swipe Right -> Prev
     if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
       if (diffX < -50) {
         handleNextPage();
@@ -130,6 +165,27 @@ export default function Home() {
 
     startX.current = 0;
     startY.current = 0;
+  };
+
+  const handlePaymentSubmit = () => {
+    setShowDetails(false);
+    setPaymentStatus("sailing");
+  };
+
+  // Autocomplete the mock sailing sequence after 4.5 seconds
+  useEffect(() => {
+    if (paymentStatus === "sailing") {
+      const timer = setTimeout(() => {
+        setPaymentStatus("delivered");
+      }, 4500);
+      return () => clearTimeout(timer);
+    }
+  }, [paymentStatus]);
+
+  const resetAll = () => {
+    setCart({});
+    setPaymentStatus("idle");
+    setPageIndex(0);
   };
 
   return (
@@ -263,7 +319,7 @@ export default function Home() {
                           disabled={selectedCount === 0}
                           onClick={(e) => {
                             e.stopPropagation();
-                            alert(`Proceeding with payment of $${totalPrice.toFixed(2)}!`);
+                            handlePaymentSubmit();
                           }}
                         >
                           {selectedCount > 0
@@ -285,7 +341,7 @@ export default function Home() {
               })}
             </div>
 
-            {/* Order Details Parchment Overlay Modal */}
+            {/* Order Details Parchment Overlay Modal (Mr. Carter's Deck) */}
             {showDetails && (
               <div 
                 className={`${styles.detailsOverlay} fade-in`}
@@ -301,11 +357,25 @@ export default function Home() {
                     <div className={`${styles.cornerDecor} ${styles.bottomLeft}`} />
                     <div className={`${styles.cornerDecor} ${styles.bottomRight}`} />
                     
+                    {/* Mr. Carter Character Header */}
+                    <div className={styles.carterHeader}>
+                      <MrCarter />
+                      <div className={styles.carterSpeechBubble}>
+                        <div className={styles.bubbleArrow} />
+                        <p className={styles.bubbleText}>
+                          {selectedCount > 0 
+                            ? "Ahoy! I'm ready to take your orders, matey!" 
+                            : "Ahoy! Ye haven't added any delicacies to me deck yet!"
+                          }
+                        </p>
+                      </div>
+                    </div>
+
                     <h3 className={styles.detailsTitle}>
-                      Your Plate Details
+                      Your Order Details
                     </h3>
                     <div className={styles.detailsCoordinates}>
-                      REVIEW SELECTED DELICACIES
+                      MR. CARTER'S ACTIVE DELIVERIES
                     </div>
 
                     <div className={styles.detailsList}>
@@ -348,14 +418,107 @@ export default function Home() {
                       <button 
                         className={styles.closeDetailsBtn}
                         disabled={selectedItemsList.length === 0}
-                        onClick={() => {
-                          alert(`Proceeding with payment of $${totalPrice.toFixed(2)}!`);
-                        }}
+                        onClick={handlePaymentSubmit}
                         style={{ flex: 1 }}
                       >
                         Pay ${totalPrice.toFixed(2)}
                       </button>
                     </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Mr. Carter's Sailing Ship Mock Payment Overlay */}
+            {paymentStatus === "sailing" && (
+              <div className={styles.sailingOverlay}>
+                <div className={styles.sailingContent}>
+                  {/* Wave Layer Back */}
+                  <div className={`${styles.wave} ${styles.waveBack}`}>
+                    <svg viewBox="0 0 1200 120" fill="#3a2314" opacity="0.3" width="100%">
+                      <path d="M0,60 C150,90 350,30 500,60 C650,90 850,30 1000,60 C1150,90 1200,60 1200,60 L1200,120 L0,120 Z" />
+                    </svg>
+                  </div>
+
+                  {/* Bobbing and Sailing Ship */}
+                  <div className={styles.sailingShipWrapper}>
+                    <svg viewBox="0 0 120 120" className={styles.sailingShipSvg}>
+                      {/* Ship Hull */}
+                      <path d="M25 70 C30 84 85 84 90 70 L85 58 L30 58 Z" fill="#5c3d21" stroke="#3b2314" strokeWidth="2" />
+                      <line x1="27" y1="64" x2="88" y2="64" stroke="#ba9a70" strokeWidth="1.5" />
+                      
+                      {/* Masts */}
+                      <line x1="42" y1="58" x2="42" y2="18" stroke="#3b2314" strokeWidth="2.5" />
+                      <line x1="60" y1="58" x2="60" y2="12" stroke="#3b2314" strokeWidth="3" />
+                      <line x1="78" y1="58" x2="78" y2="18" stroke="#3b2314" strokeWidth="2.5" />
+                      
+                      {/* Sails */}
+                      <path d="M42 22 C50 26 50 48 42 53 C53 48 53 26 42 22 Z" fill="#f4eedb" stroke="#3b2314" strokeWidth="1.5" />
+                      <path d="M60 16 C72 22 72 48 60 54 C75 48 75 22 60 16 Z" fill="#f4eedb" stroke="#3b2314" strokeWidth="1.5" />
+                      <path d="M78 22 C86 26 86 48 78 53 C89 48 89 26 78 22 Z" fill="#f4eedb" stroke="#3b2314" strokeWidth="1.5" />
+                      
+                      {/* Jolly Roger Skull detail on middle sail */}
+                      <circle cx="66" cy="35" r="2.5" fill="#3b2314" />
+                      <line x1="63" y1="39" x2="69" y2="39" stroke="#3b2314" strokeWidth="1" />
+                      
+                      {/* Red Flags */}
+                      <path d="M42 18 L33 22 L42 26 Z" fill="#ef4444" />
+                      <path d="M60 12 L50 16 L60 20 Z" fill="#ef4444" />
+                      <path d="M78 18 L69 22 L78 26 Z" fill="#ef4444" />
+                    </svg>
+                  </div>
+
+                  {/* Wave Layer Front */}
+                  <div className={`${styles.wave} ${styles.waveFront}`}>
+                    <svg viewBox="0 0 1200 120" fill="#5c3d21" opacity="0.9" width="100%">
+                      <path d="M0,70 C150,40 300,100 450,70 C600,40 750,100 900,70 C1050,40 1200,70 1200,70 L1200,120 L0,120 Z" />
+                    </svg>
+                  </div>
+
+                  <div className={styles.sailingInfo}>
+                    <h2 className={styles.sailingTitle}>Sailing the High Seas</h2>
+                    <p className={styles.sailingSubtitle}>Mr. Carter is sailing your order across the waters...</p>
+                    
+                    {/* Animated Route Line */}
+                    <div className={styles.voyageProgressContainer}>
+                      <div className={styles.voyageProgressBar} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Delivery Success State */}
+            {paymentStatus === "delivered" && (
+              <div className={styles.detailsOverlay}>
+                <div className={styles.deliveredModal}>
+                  <div className={styles.detailsBorder}>
+                    <div className={`${styles.cornerDecor} ${styles.topLeft}`} />
+                    <div className={`${styles.cornerDecor} ${styles.topRight}`} />
+                    <div className={`${styles.cornerDecor} ${styles.bottomLeft}`} />
+                    <div className={`${styles.cornerDecor} ${styles.bottomRight}`} />
+                    
+                    {/* Golden Wax Seal */}
+                    <div className={styles.waxSeal}>
+                      <span className={styles.waxSealMark}>C</span>
+                    </div>
+
+                    <h2 className={styles.detailsTitle} style={{ marginTop: "1rem" }}>
+                      Safe Harbor Reached!
+                    </h2>
+                    <p style={{ fontFamily: "var(--font-outfit)", fontStyle: "italic", fontSize: "0.85rem", color: "#614d3f", textAlign: "center", margin: "1rem 0 2rem 0", lineHeight: "1.5" }}>
+                      "Ahoy, matey! Me ship has safely docked. Yer delicacies have been delivered to yer coordinates. Enjoy the feast, and may fair winds follow ye!"
+                      <br/>
+                      <strong style={{ color: "#3b2314", display: "block", marginTop: "0.5rem" }}>— Mr. Carter, Cart Captain</strong>
+                    </p>
+
+                    <button 
+                      className={styles.closeDetailsBtn}
+                      onClick={resetAll}
+                      style={{ width: "100%" }}
+                    >
+                      Return to Port
+                    </button>
                   </div>
                 </div>
               </div>
