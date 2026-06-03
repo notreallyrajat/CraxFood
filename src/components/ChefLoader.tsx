@@ -24,21 +24,26 @@ export default function ChefLoader({ onComplete, duration = 3500 }: ChefLoaderPr
   const [messageIndex, setMessageIndex] = useState(0);
   const [textOpacity, setTextOpacity] = useState(1);
 
+  const startTimeRef = React.useRef(Date.now());
+  const onCompleteRef = React.useRef(onComplete);
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
+
   useEffect(() => {
     let animationFrameId: number;
-    const startTime = Date.now();
+    startTimeRef.current = Date.now();
 
     const updateLoader = () => {
-      const elapsed = Date.now() - startTime;
+      const elapsed = Date.now() - startTimeRef.current;
       const currentProgress = Math.min((elapsed / duration) * 100, 100);
       setProgress(currentProgress);
 
       const messageCycleTime = 900;
       const currentMessageIdx = Math.floor(elapsed / messageCycleTime) % RUSH_MESSAGES.length;
       
-      if (currentMessageIdx !== messageIndex) {
-        setMessageIndex(currentMessageIdx);
-      }
+      setMessageIndex(prev => prev !== currentMessageIdx ? currentMessageIdx : prev);
 
       const phase = elapsed % messageCycleTime;
       let opacity = 1;
@@ -53,9 +58,10 @@ export default function ChefLoader({ onComplete, duration = 3500 }: ChefLoaderPr
         animationFrameId = requestAnimationFrame(updateLoader);
       } else {
         setProgress(100);
-        if (onComplete) {
-          // slight delay to let the progress bar hit 100% visually
-          setTimeout(onComplete, 100);
+        if (onCompleteRef.current) {
+          setTimeout(() => {
+            if (onCompleteRef.current) onCompleteRef.current();
+          }, 100);
         }
       }
     };
@@ -63,7 +69,7 @@ export default function ChefLoader({ onComplete, duration = 3500 }: ChefLoaderPr
     animationFrameId = requestAnimationFrame(updateLoader);
 
     return () => cancelAnimationFrame(animationFrameId);
-  }, [duration, onComplete, messageIndex]);
+  }, [duration]);
 
   return (
     <div className={styles.loaderContainer}>
