@@ -223,59 +223,57 @@ export default function Home() {
                     className={`${styles.bookPage} ${pageClass}`}
                     style={{ zIndex: TOTAL_PAGES - idx }}
                   >
-                    <div className={styles.mapBorder}>
-                      <div className={`${styles.cornerDecor} ${styles.topLeft}`} />
-                      <div className={`${styles.cornerDecor} ${styles.topRight}`} />
-                      <div className={`${styles.cornerDecor} ${styles.bottomLeft}`} />
-                      <div className={`${styles.cornerDecor} ${styles.bottomRight}`} />
-
-                      <div className={styles.pageSpineCrease} />
-
-                      {idx === 0 ? (
-                        <div className={styles.coverPage}>
-                          <h1 className={styles.coverTitle}>CRAXFOOD</h1>
-                          <p className={styles.coverSubtitle}>The Culinary Expedition</p>
-                          <img src="/vintage_ship_cover.png" alt="Vintage Ship Cover" className={styles.coverImage} />
-                          <div className={styles.swipeHint} style={{ marginTop: "2rem" }}>
-                            [ Swipe Left to Open Menu ]
-                          </div>
+                    {idx === 0 || idx === TOTAL_PAGES - 1 ? (
+                      <div className={styles.fullCoverPage}>
+                        <div className={styles.vintageShipBg} />
+                        <div className={styles.fullCoverContent}>
+                          {idx === 0 ? (
+                            <div className={styles.swipeHintCover}>
+                              [ Swipe Left to Open Menu ]
+                            </div>
+                          ) : (
+                            <>
+                              <div className={styles.coverButtonContainer}>
+                                <button
+                                  className={styles.detailsBtn}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowDetails(true);
+                                  }}
+                                  style={{ background: "rgba(253, 250, 242, 0.95)" }}
+                                >
+                                  View Order Details ({selectedCount})
+                                </button>
+                                <button
+                                  className={`${styles.paymentBtn} ${
+                                    selectedCount > 0 ? styles.activePayment : ""
+                                  }`}
+                                  disabled={selectedCount === 0}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handlePaymentSubmit();
+                                  }}
+                                >
+                                  {selectedCount > 0
+                                    ? `Proceed to Payment ($${totalPrice.toFixed(2)})`
+                                    : "Select Items First"}
+                                </button>
+                              </div>
+                              <div className={styles.swipeHintCover}>
+                                [ Swipe Right to Go Back ]
+                              </div>
+                            </>
+                          )}
                         </div>
-                      ) : idx === TOTAL_PAGES - 1 ? (
-                        <div className={styles.coverPage}>
-                          <h1 className={styles.coverTitle}>YOUR JOURNEY ENDS HERE</h1>
-                          <p className={styles.coverSubtitle}>Ready to check out?</p>
-                          <img src="/vintage_ship_cover.png" alt="Vintage Ship Back Cover" className={styles.coverImage} />
-                          <div className={styles.buttonContainer} style={{ marginTop: "2rem" }}>
-                            <button
-                              className={styles.detailsBtn}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setShowDetails(true);
-                              }}
-                            >
-                              View Order Details ({selectedCount})
-                            </button>
-                            <button
-                              className={`${styles.paymentBtn} ${
-                                selectedCount > 0 ? styles.activePayment : ""
-                              }`}
-                              disabled={selectedCount === 0}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handlePaymentSubmit();
-                              }}
-                            >
-                              {selectedCount > 0
-                                ? `Proceed to Payment ($${totalPrice.toFixed(2)})`
-                                : "Select Items to Proceed"}
-                            </button>
-                          </div>
-                          <div className={styles.swipeHint} style={{ marginTop: "2rem" }}>
-                            [ Swipe Right to Go Back ]
-                          </div>
-                        </div>
-                      ) : (
-                        <>
+                      </div>
+                    ) : (
+                      <div className={styles.mapBorder}>
+                        <div className={`${styles.cornerDecor} ${styles.topLeft}`} />
+                        <div className={`${styles.cornerDecor} ${styles.topRight}`} />
+                        <div className={`${styles.cornerDecor} ${styles.bottomLeft}`} />
+                        <div className={`${styles.cornerDecor} ${styles.bottomRight}`} />
+
+                        <div className={styles.pageSpineCrease} />
                           <div className={styles.mapGrid} />
                           <svg
                             viewBox="0 0 100 100"
@@ -378,9 +376,8 @@ export default function Home() {
                               [ Swipe Left for Next / Swipe Right for Prev ]
                             </div>
                           </div>
-                        </>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
