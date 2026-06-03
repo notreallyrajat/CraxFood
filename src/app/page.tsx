@@ -117,8 +117,10 @@ export default function Home() {
     }))
   );
 
+  const TOTAL_PAGES = MENU_DATA.length + 2;
+
   const handleNextPage = () => {
-    if (pageIndex < MENU_DATA.length - 1) {
+    if (pageIndex < TOTAL_PAGES - 1) {
       setPageIndex(pageIndex + 1);
       setShowDetails(false);
     }
@@ -204,7 +206,7 @@ export default function Home() {
               onMouseMove={(e) => handleDragMove(e.clientX, e.clientY)}
               onMouseUp={(e) => handleDragEnd(e.clientX, e.clientY)}
             >
-              {MENU_DATA.map((page, idx) => {
+              {Array.from({ length: TOTAL_PAGES }).map((_, idx) => {
                 const isCurrent = idx === pageIndex;
                 const isPast = idx < pageIndex;
                 
@@ -219,7 +221,7 @@ export default function Home() {
                   <div
                     key={idx}
                     className={`${styles.bookPage} ${pageClass}`}
-                    style={{ zIndex: MENU_DATA.length - idx }}
+                    style={{ zIndex: TOTAL_PAGES - idx }}
                   >
                     <div className={styles.mapBorder}>
                       <div className={`${styles.cornerDecor} ${styles.topLeft}`} />
@@ -228,113 +230,156 @@ export default function Home() {
                       <div className={`${styles.cornerDecor} ${styles.bottomRight}`} />
 
                       <div className={styles.pageSpineCrease} />
-                      <div className={styles.mapGrid} />
 
-                      <svg
-                        viewBox="0 0 100 100"
-                        className={styles.compassRoseWatermark}
-                        fill="none"
-                      >
-                        <circle cx="50" cy="50" r="45" stroke="#5c3d21" strokeWidth="0.5" strokeDasharray="2 2" />
-                        <circle cx="50" cy="50" r="38" stroke="#5c3d21" strokeWidth="0.75" />
-                        <circle cx="50" cy="50" r="3" fill="#5c3d21" />
-                        <path d="M 50 50 L 50 12 L 47 45 Z" fill="#5c3d21" />
-                        <path d="M 50 50 L 50 12 L 53 45 Z" stroke="#5c3d21" strokeWidth="0.75" />
-                        <path d="M 50 50 L 50 88 L 53 55 Z" fill="#5c3d21" />
-                        <path d="M 50 50 L 50 88 L 47 55 Z" stroke="#5c3d21" strokeWidth="0.75" />
-                        <path d="M 50 50 L 88 50 L 55 47 Z" fill="#5c3d21" />
-                        <path d="M 50 50 L 88 50 L 55 53 Z" stroke="#5c3d21" strokeWidth="0.75" />
-                        <path d="M 50 50 L 12 50 L 45 53 Z" fill="#5c3d21" />
-                        <path d="M 50 50 L 12 50 L 45 47 Z" stroke="#5c3d21" strokeWidth="0.75" />
-                        <path d="M 50 50 L 77 23 L 53 43 Z" fill="#5c3d21" opacity="0.6" />
-                        <path d="M 50 50 L 23 77 L 47 57 Z" fill="#5c3d21" opacity="0.6" />
-                        <path d="M 50 50 L 23 23 L 43 53 Z" fill="#5c3d21" opacity="0.6" />
-                        <path d="M 50 50 L 77 77 L 57 47 Z" fill="#5c3d21" opacity="0.6" />
-                        <text x="48" y="9" fontSize="6" fill="#5c3d21" fontWeight="bold">N</text>
-                        <text x="48" y="96" fontSize="6" fill="#5c3d21" fontWeight="bold">S</text>
-                        <text x="91" y="52" fontSize="6" fill="#5c3d21" fontWeight="bold">E</text>
-                        <text x="5" y="52" fontSize="6" fill="#5c3d21" fontWeight="bold">W</text>
-                      </svg>
-
-                      {/* Header */}
-                      <div className={styles.mapHeader}>
-                        <span className={styles.mapSubtitle}>EST. 2026 / CULINARY EXPEDITION</span>
-                        <br />
-                        <h1 className={styles.mapTitle}>{page.category}</h1>
-                        <div className={styles.mapCoordinates}>
-                          REGION: {page.region}
+                      {idx === 0 ? (
+                        <div className={styles.coverPage}>
+                          <h1 className={styles.coverTitle}>CRAXFOOD</h1>
+                          <p className={styles.coverSubtitle}>The Culinary Expedition</p>
+                          <img src="/chill_pirate_cover.png" alt="Pirate Cover" className={styles.coverImage} />
+                          <div className={styles.swipeHint} style={{ marginTop: "2rem" }}>
+                            [ Swipe Left to Open Menu ]
+                          </div>
                         </div>
-                      </div>
-
-                      {/* Menu List */}
-                      <div className={styles.menuList}>
-                        {page.items.map((item) => {
-                          const isChecked = !!cart[item.id];
-                          return (
-                            <div
-                              key={item.id}
-                              className={`${styles.menuListItem} ${
-                                isChecked ? styles.selectedItem : ""
-                              }`}
+                      ) : idx === TOTAL_PAGES - 1 ? (
+                        <div className={styles.coverPage}>
+                          <h1 className={styles.coverTitle}>YOUR JOURNEY ENDS HERE</h1>
+                          <p className={styles.coverSubtitle}>Ready to check out?</p>
+                          <img src="/chill_pirate_cover.png" alt="Pirate Back Cover" className={styles.coverImage} />
+                          <div className={styles.buttonContainer} style={{ marginTop: "2rem" }}>
+                            <button
+                              className={styles.detailsBtn}
                               onClick={(e) => {
-                                if (isDragging.current) return;
-                                toggleItem(item.id);
+                                e.stopPropagation();
+                                setShowDetails(true);
                               }}
                             >
-                              <div className={styles.itemLeft}>
-                                <div
-                                  className={`${styles.customCheckbox} ${
-                                    isChecked ? styles.checked : ""
-                                  }`}
-                                >
-                                  {isChecked && <span className={styles.checkmark}>✓</span>}
-                                </div>
-                                <span className={styles.itemName}>{item.name}</span>
-                              </div>
-                              <span className={styles.itemConnector} />
-                              <span className={styles.itemPrice}>
-                                ${item.price.toFixed(2)}
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Bottom Button Layout */}
-                      <div className={styles.buttonContainer}>
-                        <button
-                          className={styles.detailsBtn}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowDetails(true);
-                          }}
-                        >
-                          View Order Details ({selectedCount})
-                        </button>
-                        
-                        <button
-                          className={`${styles.paymentBtn} ${
-                            selectedCount > 0 ? styles.activePayment : ""
-                          }`}
-                          disabled={selectedCount === 0}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handlePaymentSubmit();
-                          }}
-                        >
-                          {selectedCount > 0
-                            ? `Proceed to Payment ($${totalPrice.toFixed(2)})`
-                            : "Select Items to Proceed"}
-                        </button>
-                      </div>
-
-                      {/* Page Info & Swipe Instruction helper */}
-                      <div className={styles.pageNumberWatermark}>
-                        Page {idx + 1} of {MENU_DATA.length}
-                        <div className={styles.swipeHint}>
-                          [ Swipe Left for Next / Swipe Right for Prev ]
+                              View Order Details ({selectedCount})
+                            </button>
+                            <button
+                              className={`${styles.paymentBtn} ${
+                                selectedCount > 0 ? styles.activePayment : ""
+                              }`}
+                              disabled={selectedCount === 0}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePaymentSubmit();
+                              }}
+                            >
+                              {selectedCount > 0
+                                ? `Proceed to Payment ($${totalPrice.toFixed(2)})`
+                                : "Select Items to Proceed"}
+                            </button>
+                          </div>
+                          <div className={styles.swipeHint} style={{ marginTop: "2rem" }}>
+                            [ Swipe Right to Go Back ]
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <>
+                          <div className={styles.mapGrid} />
+                          <svg
+                            viewBox="0 0 100 100"
+                            className={styles.compassRoseWatermark}
+                            fill="none"
+                          >
+                            <circle cx="50" cy="50" r="45" stroke="#5c3d21" strokeWidth="0.5" strokeDasharray="2 2" />
+                            <circle cx="50" cy="50" r="38" stroke="#5c3d21" strokeWidth="0.75" />
+                            <circle cx="50" cy="50" r="3" fill="#5c3d21" />
+                            <path d="M 50 50 L 50 12 L 47 45 Z" fill="#5c3d21" />
+                            <path d="M 50 50 L 50 12 L 53 45 Z" stroke="#5c3d21" strokeWidth="0.75" />
+                            <path d="M 50 50 L 50 88 L 53 55 Z" fill="#5c3d21" />
+                            <path d="M 50 50 L 50 88 L 47 55 Z" stroke="#5c3d21" strokeWidth="0.75" />
+                            <path d="M 50 50 L 88 50 L 55 47 Z" fill="#5c3d21" />
+                            <path d="M 50 50 L 88 50 L 55 53 Z" stroke="#5c3d21" strokeWidth="0.75" />
+                            <path d="M 50 50 L 12 50 L 45 53 Z" fill="#5c3d21" />
+                            <path d="M 50 50 L 12 50 L 45 47 Z" stroke="#5c3d21" strokeWidth="0.75" />
+                            <path d="M 50 50 L 77 23 L 53 43 Z" fill="#5c3d21" opacity="0.6" />
+                            <path d="M 50 50 L 23 77 L 47 57 Z" fill="#5c3d21" opacity="0.6" />
+                            <path d="M 50 50 L 23 23 L 43 53 Z" fill="#5c3d21" opacity="0.6" />
+                            <path d="M 50 50 L 77 77 L 57 47 Z" fill="#5c3d21" opacity="0.6" />
+                            <text x="48" y="9" fontSize="6" fill="#5c3d21" fontWeight="bold">N</text>
+                            <text x="48" y="96" fontSize="6" fill="#5c3d21" fontWeight="bold">S</text>
+                            <text x="91" y="52" fontSize="6" fill="#5c3d21" fontWeight="bold">E</text>
+                            <text x="5" y="52" fontSize="6" fill="#5c3d21" fontWeight="bold">W</text>
+                          </svg>
+
+                          <div className={styles.mapHeader}>
+                            <span className={styles.mapSubtitle}>EST. 2026 / CULINARY EXPEDITION</span>
+                            <br />
+                            <h1 className={styles.mapTitle}>{MENU_DATA[idx - 1].category}</h1>
+                            <div className={styles.mapCoordinates}>
+                              REGION: {MENU_DATA[idx - 1].region}
+                            </div>
+                          </div>
+
+                          <div className={styles.menuList}>
+                            {MENU_DATA[idx - 1].items.map((item) => {
+                              const isChecked = !!cart[item.id];
+                              return (
+                                <div
+                                  key={item.id}
+                                  className={`${styles.menuListItem} ${
+                                    isChecked ? styles.selectedItem : ""
+                                  }`}
+                                  onClick={(e) => {
+                                    if (isDragging.current) return;
+                                    toggleItem(item.id);
+                                  }}
+                                >
+                                  <div className={styles.itemLeft}>
+                                    <div
+                                      className={`${styles.customCheckbox} ${
+                                        isChecked ? styles.checked : ""
+                                      }`}
+                                    >
+                                      {isChecked && <span className={styles.checkmark}>✓</span>}
+                                    </div>
+                                    <span className={styles.itemName}>{item.name}</span>
+                                  </div>
+                                  <span className={styles.itemConnector} />
+                                  <span className={styles.itemPrice}>
+                                    ${item.price.toFixed(2)}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          <div className={styles.buttonContainer}>
+                            <button
+                              className={styles.detailsBtn}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowDetails(true);
+                              }}
+                            >
+                              View Order Details ({selectedCount})
+                            </button>
+                            
+                            <button
+                              className={`${styles.paymentBtn} ${
+                                selectedCount > 0 ? styles.activePayment : ""
+                              }`}
+                              disabled={selectedCount === 0}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePaymentSubmit();
+                              }}
+                            >
+                              {selectedCount > 0
+                                ? `Proceed to Payment ($${totalPrice.toFixed(2)})`
+                                : "Select Items to Proceed"}
+                            </button>
+                          </div>
+
+                          <div className={styles.pageNumberWatermark}>
+                            Page {idx} of {MENU_DATA.length}
+                            <div className={styles.swipeHint}>
+                              [ Swipe Left for Next / Swipe Right for Prev ]
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 );
