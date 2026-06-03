@@ -362,82 +362,9 @@
   box-shadow: 0 8px 18px rgba(92, 61, 33, 0.25);
 }
 
-/* Curl Fold Paper Pagination Corner Flaps */
-.curlCorner {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
-  z-index: 20;
-  transition: all 0.3s ease;
-}
-
-.curlBottomRight {
-  bottom: 0;
-  right: 0;
-}
-
-.curlTopLeft {
-  top: 0;
-  left: 0;
-}
-
-.curlFold {
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  transition: all 0.3s ease;
-}
-
-.curlBottomRight .curlFold {
-  bottom: 0;
-  right: 0;
-  border-width: 0 0 25px 25px;
-  border-color: transparent transparent #ba9a70 #ba9a70;
-  box-shadow: -2px -2px 5px rgba(0,0,0,0.15);
-}
-
-.curlTopLeft .curlFold {
-  top: 0;
-  left: 0;
-  border-width: 25px 25px 0 0;
-  border-color: #ba9a70 transparent transparent #ba9a70;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
-}
-
-/* Hover effects to simulate curling paper */
-.curlBottomRight:hover .curlFold {
-  border-width: 0 0 35px 35px;
-}
-
-.curlTopLeft:hover .curlFold {
-  border-width: 35px 35px 0 0;
-}
-
-.curlText {
-  position: absolute;
-  font-size: 0.55rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-weight: bold;
-  color: #8c6239;
-  pointer-events: none;
-}
-
-.curlBottomRight .curlText {
-  bottom: 24px;
-  right: 6px;
-}
-
-.curlTopLeft .curlText {
-  top: 24px;
-  left: 6px;
-}
-
 .pageNumberWatermark {
   position: absolute;
-  bottom: 0.8rem;
+  bottom: 0.6rem;
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.6rem;
@@ -445,6 +372,17 @@
   text-transform: uppercase;
   color: #8c6239;
   opacity: 0.6;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.swipeHint {
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: #5c3d21;
+  font-weight: bold;
+  margin-top: 0.2rem;
+  opacity: 0.8;
 }
 
 /* Detail Modal Overlay Style */

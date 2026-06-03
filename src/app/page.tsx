@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import ChefLoader from "../components/ChefLoader";
 import styles from "./page.module.css";
 
@@ -53,6 +53,11 @@ export default function Home() {
   const [cart, setCart] = useState<Record<string, boolean>>({});
   const [showDetails, setShowDetails] = useState(false);
 
+  // Drag/Swipe coordinates refs
+  const startX = useRef(0);
+  const startY = useRef(0);
+  const isDragging = useRef(false);
+
   const toggleItem = (id: string) => {
     setCart((prev) => ({
       ...prev,
@@ -62,7 +67,6 @@ export default function Home() {
 
   const selectedCount = Object.values(cart).filter(Boolean).length;
 
-  // Calculate total price from all pages
   const totalPrice = MENU_DATA.reduce((sum, page) => {
     return sum + page.items.reduce((pageSum, item) => {
       return cart[item.id] ? pageSum + item.price : pageSum;
@@ -83,6 +87,45 @@ export default function Home() {
     }
   };
 
+  // Drag Gesture Handlers (supporting both touch and mouse)
+  const handleDragStart = (clientX: number, clientY: number) => {
+    startX.current = clientX;
+    startY.current = clientY;
+    isDragging.current = false;
+  };
+
+  const handleDragMove = (clientX: number, clientY: number) => {
+    if (startX.current === 0) return;
+    const diffX = clientX - startX.current;
+    const diffY = clientY - startY.current;
+
+    // If movement is significant, flag as dragging
+    if (Math.abs(diffX) > 10 || Math.abs(diffY) > 10) {
+      isDragging.current = true;
+    }
+  };
+
+  const handleDragEnd = (clientX: number, clientY: number) => {
+    if (startX.current === 0) return;
+    
+    const diffX = clientX - startX.current;
+    const diffY = clientY - startY.current;
+
+    // Swipe validation: primary horizontal movement and > 50px distance
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+      if (diffX > 50) {
+        // Drag to the right -> Go to NEXT page
+        handleNextPage();
+      } else if (diffX < -50) {
+        // Drag to the left -> Go to PREVIOUS page
+        handlePrevPage();
+      }
+    }
+
+    startX.current = 0;
+    startY.current = 0;
+  };
+
   return (
     <>
       {isLoading ? (
@@ -91,7 +134,15 @@ export default function Home() {
         <div className={styles.mapContainer}>
           <div className={styles.bookWrapper}>
             {/* Book Container with perspective */}
-            <div className={styles.bookContainer}>
+            <div
+              className={styles.bookContainer}
+              onTouchStart={(e) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY)}
+              onTouchMove={(e) => handleDragMove(e.touches[0].clientX, e.touches[0].clientY)}
+              onTouchEnd={(e) => handleDragEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY)}
+              onMouseDown={(e) => handleDragStart(e.clientX, e.clientY)}
+              onMouseMove={(e) => handleDragMove(e.clientX, e.clientY)}
+              onMouseUp={(e) => handleDragEnd(e.clientX, e.clientY)}
+            >
               {MENU_DATA.map((page, idx) => {
                 const isCurrent = idx === pageIndex;
                 const isPast = idx < pageIndex;
@@ -170,7 +221,11 @@ export default function Home() {
                               className={`${styles.menuListItem} ${
                                 isChecked ? styles.selectedItem : ""
                               }`}
-                              onClick={() => toggleItem(item.id)}
+                              onClick={(e) => {
+                                // Ignore selection if dragging/swiping
+                                if (isDragging.current) return;
+                                toggleItem(item.id);
+                              }}
                             >
                               <div className={styles.itemLeft}>
                                 <div
@@ -219,36 +274,12 @@ export default function Home() {
                         </button>
                       </div>
 
-                      {/* Pagination: Book Page turning flaps */}
-                      {idx < MENU_DATA.length - 1 && (
-                        <div
-                          className={`${styles.curlCorner} ${styles.curlBottomRight}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleNextPage();
-                          }}
-                        >
-                          <div className={styles.curlText}>Next</div>
-                          <div className={styles.curlFold} />
-                        </div>
-                      )}
-
-                      {idx > 0 && (
-                        <div
-                          className={`${styles.curlCorner} ${styles.curlTopLeft}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handlePrevPage();
-                          }}
-                        >
-                          <div className={styles.curlText}>Prev</div>
-                          <div className={styles.curlFold} />
-                        </div>
-                      )}
-
-                      {/* Page number watermark inside book spine */}
+                      {/* Page Info & Swipe Instruction helper */}
                       <div className={styles.pageNumberWatermark}>
                         Page {idx + 1} of {MENU_DATA.length}
+                        <div className={styles.swipeHint}>
+                          [ Slide Screen: Right for Next / Left for Prev ]
+                        </div>
                       </div>
                     </div>
                   </div>
