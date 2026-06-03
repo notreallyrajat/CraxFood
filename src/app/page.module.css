@@ -24,7 +24,6 @@
 /* The Map Scroll */
 .mapScroll {
   background: #f4eedb; /* Pale parchment base */
-  /* CSS gradient representing age spots and sun-bleached parchment */
   background-image: 
     radial-gradient(circle at 20% 30%, rgba(206, 178, 137, 0.4) 0%, transparent 60%),
     radial-gradient(circle at 80% 70%, rgba(186, 154, 112, 0.5) 0%, transparent 50%),
@@ -38,7 +37,7 @@
   
   border-radius: 6px;
   width: 100%;
-  max-width: 1000px;
+  max-width: 680px; /* Slimmer for list layout */
   padding: 3rem;
   position: relative;
   font-family: var(--font-cinzel), Georgia, serif;
@@ -46,24 +45,23 @@
   overflow: hidden;
   
   /* Map Unfolding Animation */
-  animation: mapUnfold 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: mapUnfold 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   transform-origin: center center;
 }
 
 /* Aged Map Double Border Detail */
 .mapBorder {
   border: 1px solid rgba(92, 61, 33, 0.3);
-  padding: 1.5rem;
+  padding: 2rem;
   height: 100%;
   position: relative;
-  pointer-events: none; /* Let clicks pass through to items */
 }
 
 /* Decorative corner marks */
 .cornerDecor {
   position: absolute;
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   border-color: #5c3d21;
   border-style: solid;
   pointer-events: none;
@@ -98,177 +96,189 @@
   width: 100%;
   height: 100%;
   background-image: 
-    linear-gradient(rgba(92, 61, 33, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(92, 61, 33, 0.05) 1px, transparent 1px);
-  background-size: 80px 80px;
+    linear-gradient(rgba(92, 61, 33, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(92, 61, 33, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
   pointer-events: none;
 }
 
-/* Watermarks (Compass Rose & Sailing Ship) */
+/* Watermark (Compass Rose) */
 .compassRoseWatermark {
   position: absolute;
-  top: 10%;
-  right: 8%;
-  width: 160px;
-  height: 160px;
-  opacity: 0.12;
+  top: 8%;
+  right: 6%;
+  width: 130px;
+  height: 130px;
+  opacity: 0.1;
   pointer-events: none;
   stroke: #5c3d21;
   transform: rotate(15deg);
-  animation: slowSpin 120s linear infinite;
-}
-
-.shipWatermark {
-  position: absolute;
-  bottom: 8%;
-  left: 8%;
-  width: 120px;
-  height: 120px;
-  opacity: 0.1;
-  pointer-events: none;
-  fill: #5c3d21;
 }
 
 /* Map Header */
 .mapHeader {
   text-align: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2.5rem;
   position: relative;
   z-index: 10;
-  pointer-events: auto;
 }
 
 .mapSubtitle {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
   color: #8c6239;
-  margin-bottom: 0.5rem;
 }
 
 .mapTitle {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   border-bottom: 2px double rgba(92, 61, 33, 0.3);
   display: inline-block;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.3rem;
+  margin-top: 0.5rem;
   color: #3b2314;
 }
 
 .mapCoordinates {
-  font-family: monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  color: #8c6239;
-  margin-top: 0.5rem;
-  opacity: 0.8;
-}
-
-/* Menu Layout */
-.menuGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3.5rem;
-  position: relative;
-  z-index: 10;
-  pointer-events: auto;
-}
-
-.menuSection {
-  display: flex;
-  flex-direction: column;
-  gap: 1.8rem;
-}
-
-.sectionTitle {
-  font-size: 1.25rem;
-  font-weight: 700;
-  text-transform: uppercase;
+  font-size: 0.7rem;
   letter-spacing: 0.15em;
   color: #8c6239;
-  border-bottom: 1px solid rgba(92, 61, 33, 0.2);
-  padding-bottom: 0.3rem;
-  margin-bottom: 0.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  margin-top: 0.5rem;
+  font-weight: bold;
 }
 
-.sectionRegion {
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  opacity: 0.7;
-}
-
-.menuItem {
+/* List Layout styling */
+.menuList {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  transition: transform 0.25s ease;
+  gap: 1.2rem;
+  position: relative;
+  z-index: 10;
+  margin-bottom: 3rem;
 }
 
-.menuItem:hover {
-  transform: translateX(6px);
-}
-
-.itemHeader {
+.menuListItem {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: rgba(92, 61, 33, 0.02);
+  transition: all 0.2s ease-in-out;
+}
+
+.menuListItem:hover {
+  background: rgba(92, 61, 33, 0.06);
+  border-color: rgba(92, 61, 33, 0.15);
+  transform: translateX(4px);
+}
+
+.selectedItem {
+  background: rgba(186, 111, 27, 0.08);
+  border-color: rgba(186, 111, 27, 0.25);
+}
+
+.itemLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Custom Checkbox Design */
+.customCheckbox {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #5c3d21;
+  border-radius: 4px;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.checked {
+  background: #5c3d21;
+  border-color: #5c3d21;
+}
+
+.checkmark {
+  color: #f4eedb;
+  font-size: 0.8rem;
+  font-weight: 900;
 }
 
 .itemName {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: #3b2314;
+  transition: color 0.2s ease;
+}
+
+.selectedItem .itemName {
+  color: #8c6239;
 }
 
 .itemConnector {
   flex: 1;
-  border-bottom: 1px dotted rgba(92, 61, 33, 0.4);
+  border-bottom: 1px dashed rgba(92, 61, 33, 0.3);
+  margin: 0 1rem;
+  opacity: 0.8;
 }
 
 .itemPrice {
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   color: #5c3d21;
 }
 
-.itemDesc {
-  font-size: 0.8rem;
-  font-family: var(--font-outfit), sans-serif;
-  line-height: 1.4;
-  color: #614d3f;
-  font-style: italic;
-}
-
-.itemLabel {
-  font-size: 0.65rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  font-family: var(--font-cinzel), serif;
-  color: #ba6f1b;
-  font-weight: bold;
-}
-
-/* Map Footer Navigation */
-.mapFooter {
-  text-align: center;
-  margin-top: 3.5rem;
+/* Payment button section */
+.paymentSection {
+  display: flex;
+  justify-content: center;
   position: relative;
   z-index: 10;
-  font-size: 0.8rem;
-  color: #8c6239;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  border-top: 1px double rgba(92, 61, 33, 0.2);
-  padding-top: 1.5rem;
-  pointer-events: auto;
+}
+
+.paymentBtn {
+  background: #5c3d21;
+  color: #f4eedb;
+  border: 1px solid #3b2314;
+  padding: 0.8rem 2rem;
+  border-radius: 6px;
+  font-family: var(--font-cinzel), Georgia, serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+}
+
+.paymentBtn:disabled {
+  background: rgba(92, 61, 33, 0.15);
+  color: rgba(92, 61, 33, 0.4);
+  border-color: rgba(92, 61, 33, 0.1);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.activePayment:hover {
+  background: #734d2a;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(92, 61, 33, 0.3);
+}
+
+.activePayment:active {
+  transform: translateY(0);
 }
 
 /* Keyframes */
@@ -276,7 +286,6 @@
   0% {
     transform: scaleX(0.01) scaleY(0.9) rotate(-1deg);
     opacity: 0;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   }
   50% {
     transform: scaleX(0.5) scaleY(1.02) rotate(0.5deg);
@@ -288,22 +297,15 @@
   }
 }
 
-@keyframes slowSpin {
-  100% {
-    transform: rotate(375deg);
-  }
-}
-
 /* Responsive */
 @media (max-width: 768px) {
-  .menuGrid {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-  }
   .mapScroll {
     padding: 1.5rem;
   }
   .mapTitle {
     font-size: 1.8rem;
+  }
+  .itemName {
+    font-size: 0.9rem;
   }
 }
