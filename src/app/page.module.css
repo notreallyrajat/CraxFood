@@ -847,13 +847,20 @@
 }
 
 .coverImage {
-  width: 250px;
-  height: 250px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 4px solid #3b2314;
+  width: 90%;
+  max-width: 360px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 2px solid #5c3d21;
   box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.5);
   margin-bottom: 1.5rem;
+  animation: coverShipBob 3.5s ease-in-out infinite;
+}
+
+@keyframes coverShipBob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1.5deg); }
 }
 
 .coverTitle {

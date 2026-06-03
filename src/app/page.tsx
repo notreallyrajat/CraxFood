@@ -235,7 +235,7 @@ export default function Home() {
                         <div className={styles.coverPage}>
                           <h1 className={styles.coverTitle}>CRAXFOOD</h1>
                           <p className={styles.coverSubtitle}>The Culinary Expedition</p>
-                          <img src="/chill_pirate_cover.png" alt="Pirate Cover" className={styles.coverImage} />
+                          <img src="/vintage_ship_cover.png" alt="Vintage Ship Cover" className={styles.coverImage} />
                           <div className={styles.swipeHint} style={{ marginTop: "2rem" }}>
                             [ Swipe Left to Open Menu ]
                           </div>
@@ -244,7 +244,7 @@ export default function Home() {
                         <div className={styles.coverPage}>
                           <h1 className={styles.coverTitle}>YOUR JOURNEY ENDS HERE</h1>
                           <p className={styles.coverSubtitle}>Ready to check out?</p>
-                          <img src="/chill_pirate_cover.png" alt="Pirate Back Cover" className={styles.coverImage} />
+                          <img src="/vintage_ship_cover.png" alt="Vintage Ship Back Cover" className={styles.coverImage} />
                           <div className={styles.buttonContainer} style={{ marginTop: "2rem" }}>
                             <button
                               className={styles.detailsBtn}
