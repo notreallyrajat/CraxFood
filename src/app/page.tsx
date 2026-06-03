@@ -73,6 +73,13 @@ export default function Home() {
     }, 0);
   }, 0);
 
+  const selectedItemsList = MENU_DATA.flatMap(page =>
+    page.items.filter(item => cart[item.id]).map(item => ({
+      ...item,
+      category: page.category
+    }))
+  );
+
   const handleNextPage = () => {
     if (pageIndex < MENU_DATA.length - 1) {
       setPageIndex(pageIndex + 1);
@@ -87,7 +94,7 @@ export default function Home() {
     }
   };
 
-  // Drag Gesture Handlers (supporting both touch and mouse)
+  // Drag Gesture Handlers
   const handleDragStart = (clientX: number, clientY: number) => {
     startX.current = clientX;
     startY.current = clientY;
@@ -99,7 +106,6 @@ export default function Home() {
     const diffX = clientX - startX.current;
     const diffY = clientY - startY.current;
 
-    // If movement is significant, flag as dragging
     if (Math.abs(diffX) > 10 || Math.abs(diffY) > 10) {
       isDragging.current = true;
     }
@@ -111,13 +117,13 @@ export default function Home() {
     const diffX = clientX - startX.current;
     const diffY = clientY - startY.current;
 
-    // Swipe validation: primary horizontal movement and > 50px distance
+    // REVERSED swipe gesture functionality for correct real paper page turn mapping:
+    // Dragging left (diffX < -50) -> Turns to next page
+    // Dragging right (diffX > 50) -> Turns to previous page
     if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-      if (diffX > 50) {
-        // Drag to the right -> Go to NEXT page
+      if (diffX < -50) {
         handleNextPage();
-      } else if (diffX < -50) {
-        // Drag to the left -> Go to PREVIOUS page
+      } else if (diffX > 50) {
         handlePrevPage();
       }
     }
@@ -133,7 +139,6 @@ export default function Home() {
       ) : (
         <div className={styles.mapContainer}>
           <div className={styles.bookWrapper}>
-            {/* Book Container with perspective */}
             <div
               className={styles.bookContainer}
               onTouchStart={(e) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY)}
@@ -160,21 +165,15 @@ export default function Home() {
                     className={`${styles.bookPage} ${pageClass}`}
                     style={{ zIndex: MENU_DATA.length - idx }}
                   >
-                    {/* Double Border Detail */}
                     <div className={styles.mapBorder}>
-                      {/* Corner Decorations */}
                       <div className={`${styles.cornerDecor} ${styles.topLeft}`} />
                       <div className={`${styles.cornerDecor} ${styles.topRight}`} />
                       <div className={`${styles.cornerDecor} ${styles.bottomLeft}`} />
                       <div className={`${styles.cornerDecor} ${styles.bottomRight}`} />
 
-                      {/* Paper Spine crease */}
                       <div className={styles.pageSpineCrease} />
-
-                      {/* Gridlines Watermark */}
                       <div className={styles.mapGrid} />
 
-                      {/* Compass Rose Watermark SVG */}
                       <svg
                         viewBox="0 0 100 100"
                         className={styles.compassRoseWatermark}
@@ -222,7 +221,6 @@ export default function Home() {
                                 isChecked ? styles.selectedItem : ""
                               }`}
                               onClick={(e) => {
-                                // Ignore selection if dragging/swiping
                                 if (isDragging.current) return;
                                 toggleItem(item.id);
                               }}
@@ -246,7 +244,7 @@ export default function Home() {
                         })}
                       </div>
 
-                      {/* Separated Two Buttons at the Bottom of Every Page */}
+                      {/* Bottom Button Layout */}
                       <div className={styles.buttonContainer}>
                         <button
                           className={styles.detailsBtn}
@@ -255,7 +253,7 @@ export default function Home() {
                             setShowDetails(true);
                           }}
                         >
-                          View Item Details
+                          View Order Details ({selectedCount})
                         </button>
                         
                         <button
@@ -278,7 +276,7 @@ export default function Home() {
                       <div className={styles.pageNumberWatermark}>
                         Page {idx + 1} of {MENU_DATA.length}
                         <div className={styles.swipeHint}>
-                          [ Slide Screen: Right for Next / Left for Prev ]
+                          [ Swipe Left for Next / Swipe Right for Prev ]
                         </div>
                       </div>
                     </div>
@@ -287,7 +285,7 @@ export default function Home() {
               })}
             </div>
 
-            {/* Item Details Parchment Overlay Modal */}
+            {/* Order Details Parchment Overlay Modal */}
             {showDetails && (
               <div 
                 className={`${styles.detailsOverlay} fade-in`}
@@ -304,30 +302,60 @@ export default function Home() {
                     <div className={`${styles.cornerDecor} ${styles.bottomRight}`} />
                     
                     <h3 className={styles.detailsTitle}>
-                      {MENU_DATA[pageIndex].category} Details
+                      Your Plate Details
                     </h3>
                     <div className={styles.detailsCoordinates}>
-                      SECRET LORE & DESCRIPTIONS
+                      REVIEW SELECTED DELICACIES
                     </div>
 
                     <div className={styles.detailsList}>
-                      {MENU_DATA[pageIndex].items.map((item) => (
-                        <div key={item.id} className={styles.detailsItem}>
-                          <div className={styles.detailsItemHeader}>
-                            <span className={styles.detailsItemName}>{item.name}</span>
-                            <span className={styles.detailsItemPrice}>${item.price.toFixed(2)}</span>
+                      {selectedItemsList.length > 0 ? (
+                        selectedItemsList.map((item) => (
+                          <div key={item.id} className={styles.detailsItem}>
+                            <div className={styles.detailsItemHeader}>
+                              <span className={styles.detailsItemName}>{item.name}</span>
+                              <span className={styles.detailsItemPrice}>${item.price.toFixed(2)}</span>
+                            </div>
+                            <div style={{ fontSize: "0.65rem", textTransform: "uppercase", color: "#8c6239", marginBottom: "0.2rem" }}>
+                              Category: {item.category}
+                            </div>
+                            <p className={styles.detailsItemDesc}>{item.desc}</p>
                           </div>
-                          <p className={styles.detailsItemDesc}>{item.desc}</p>
+                        ))
+                      ) : (
+                        <div style={{ textAlign: "center", padding: "2rem 0", color: "#8c6239", fontStyle: "italic", fontSize: "0.85rem" }}>
+                          No delicacies selected yet.<br/>Swipe pages and tick checkboxes to add.
                         </div>
-                      ))}
+                      )}
                     </div>
 
-                    <button 
-                      className={styles.closeDetailsBtn}
-                      onClick={() => setShowDetails(false)}
-                    >
-                      Return to Map
-                    </button>
+                    {selectedItemsList.length > 0 && (
+                      <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "2px double rgba(92, 61, 33, 0.3)", paddingTop: "1rem", marginBottom: "1.5rem" }}>
+                        <span style={{ fontWeight: "bold", fontSize: "0.95rem", textTransform: "uppercase", color: "#3b2314" }}>Total Feast Value:</span>
+                        <span style={{ fontWeight: "bold", fontSize: "1.1rem", color: "#ba6f1b" }}>${totalPrice.toFixed(2)}</span>
+                      </div>
+                    )}
+
+                    <div style={{ display: "flex", gap: "1rem", width: "100%" }}>
+                      <button 
+                        className={styles.closeDetailsBtn}
+                        onClick={() => setShowDetails(false)}
+                        style={{ flex: 1, background: "transparent", border: "1.5px solid #5c3d21", color: "#5c3d21" }}
+                      >
+                        Keep Browsing
+                      </button>
+                      
+                      <button 
+                        className={styles.closeDetailsBtn}
+                        disabled={selectedItemsList.length === 0}
+                        onClick={() => {
+                          alert(`Proceeding with payment of $${totalPrice.toFixed(2)}!`);
+                        }}
+                        style={{ flex: 1 }}
+                      >
+                        Pay ${totalPrice.toFixed(2)}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
