@@ -579,6 +579,22 @@
     top: 5%;
     right: 5%;
   }
+
+  /* Make the menu cover responsive on mobile viewports */
+  .vintageShipBg, .vintageShipBgBack {
+    background-position: center 75%; /* Shift focus downwards to keep the kraken and ship in view */
+  }
+
+  .swipeHintCover {
+    margin-bottom: 1.5rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.55rem;
+  }
+
+  .coverButtonContainer {
+    width: 90%;
+    margin-bottom: 0.5rem;
+  }
 }
 
 /* Mr. Carter Character Styles */
@@ -842,22 +858,23 @@
   border-radius: 4px;
 }
 
-.vintageShipBg {
+.vintageShipBg, .vintageShipBgBack {
   position: absolute;
-  top: -10%;
-  left: -10%;
-  width: 120%;
-  height: 120%;
-  background-image: url('/seven_seas_cover.png');
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-size: cover;
   background-position: center;
-  animation: coverShipBob 4.5s ease-in-out infinite;
   z-index: 1;
 }
 
-@keyframes coverShipBob {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  50% { transform: translate(-2.5%, -2.5%) rotate(1.2deg); }
+.vintageShipBg {
+  background-image: url('/seven_seas_cover.png');
+}
+
+.vintageShipBgBack {
+  background-image: url('/kraken_destroy_cover.png');
 }
 
 .fullCoverContent {

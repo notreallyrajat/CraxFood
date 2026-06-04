@@ -225,7 +225,7 @@ export default function Home() {
                   >
                     {idx === 0 || idx === TOTAL_PAGES - 1 ? (
                       <div className={styles.fullCoverPage}>
-                        <div className={styles.vintageShipBg} />
+                        <div className={idx === 0 ? styles.vintageShipBg : styles.vintageShipBgBack} />
                         <div className={styles.fullCoverContent}>
                           {idx === 0 ? (
                             <div className={styles.swipeHintCover}>
@@ -234,16 +234,6 @@ export default function Home() {
                           ) : (
                             <>
                               <div className={styles.coverButtonContainer}>
-                                <button
-                                  className={styles.detailsBtn}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowDetails(true);
-                                  }}
-                                  style={{ background: "rgba(253, 250, 242, 0.95)" }}
-                                >
-                                  View Order Details ({selectedCount})
-                                </button>
                                 <button
                                   className={`${styles.paymentBtn} ${
                                     selectedCount > 0 ? styles.activePayment : ""
