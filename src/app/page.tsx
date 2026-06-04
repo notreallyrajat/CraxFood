@@ -2,9 +2,10 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import ChefLoader from "../components/ChefLoader";
+import { supabase } from "../supabase";
 import styles from "./page.module.css";
 
-const MENU_DATA = [
+const FALLBACK_MENU_DATA = [
   {
     category: "Sweets & Confections",
     region: "THE SWEET OASIS",
@@ -85,10 +86,48 @@ const MrCarter = () => (
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
+  const [menuData, setMenuData] = useState<{ category: string, region: string, items: { id: string, name: string, price: number, desc: string, image_url?: string }[] }[]>([]);
   const [pageIndex, setPageIndex] = useState(0);
   const [cart, setCart] = useState<Record<string, boolean>>({});
   const [showDetails, setShowDetails] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "sailing" | "delivered">("idle");
+
+  useEffect(() => {
+    async function fetchMenu() {
+      // In a real multi-tenant app, you would read the restaurant ID from the URL (e.g. /menu/[restaurant_id])
+      // For this demo, we just fetch all available dishes from the database.
+      const { data, error } = await supabase.from('dishes').select('*').eq('is_available', true);
+      
+      if (data && data.length > 0) {
+        // Group items by category
+        const grouped = data.reduce((acc: Record<string, any[]>, dish: Record<string, any>) => {
+          const cat = dish.category || 'Chef Specials';
+          if (!acc[cat]) acc[cat] = [];
+          acc[cat].push({
+            id: dish.id,
+            name: dish.name,
+            price: dish.price,
+            desc: dish.description || 'A delicious culinary creation.',
+            image_url: dish.image_url
+          });
+          return acc;
+        }, {});
+        
+        const formattedMenu = Object.keys(grouped).map(cat => ({
+          category: cat,
+          region: "THE ROYAL KITCHENS",
+          items: grouped[cat]
+        }));
+        
+        setMenuData(formattedMenu);
+      } else {
+        // Use fallback if database is empty
+        setMenuData(FALLBACK_MENU_DATA);
+      }
+      setIsLoading(false);
+    }
+    fetchMenu();
+  }, []);
 
   // Drag/Swipe coordinates refs
   const startX = useRef(0);
@@ -104,20 +143,20 @@ export default function Home() {
 
   const selectedCount = Object.values(cart).filter(Boolean).length;
 
-  const totalPrice = MENU_DATA.reduce((sum, page) => {
-    return sum + page.items.reduce((pageSum, item) => {
+  const totalPrice = menuData.reduce((sum, page) => {
+    return sum + page.items.reduce((pageSum: number, item: { id: string, price: number }) => {
       return cart[item.id] ? pageSum + item.price : pageSum;
     }, 0);
   }, 0);
 
-  const selectedItemsList = MENU_DATA.flatMap(page =>
-    page.items.filter(item => cart[item.id]).map(item => ({
+  const selectedItemsList = menuData.flatMap(page =>
+    page.items.filter((item: { id: string, name: string, price: number, desc: string }) => cart[item.id]).map((item: { id: string, name: string, price: number, desc: string }) => ({
       ...item,
       category: page.category
     }))
   );
 
-  const TOTAL_PAGES = MENU_DATA.length + 2;
+  const TOTAL_PAGES = menuData.length > 0 ? menuData.length + 2 : 2;
 
   const handleNextPage = () => {
     if (pageIndex < TOTAL_PAGES - 1) {
@@ -294,14 +333,14 @@ export default function Home() {
                           <div className={styles.mapHeader}>
                             <span className={styles.mapSubtitle}>EST. 2026 / CULINARY EXPEDITION</span>
                             <br />
-                            <h1 className={styles.mapTitle}>{MENU_DATA[idx - 1].category}</h1>
+                            <h1 className={styles.mapTitle}>{menuData[idx - 1].category}</h1>
                             <div className={styles.mapCoordinates}>
-                              REGION: {MENU_DATA[idx - 1].region}
+                              REGION: {menuData[idx - 1].region}
                             </div>
                           </div>
 
                           <div className={styles.menuList}>
-                            {MENU_DATA[idx - 1].items.map((item) => {
+                            {menuData[idx - 1].items.map((item: any) => {
                               const isChecked = !!cart[item.id];
                               return (
                                 <div
@@ -361,7 +400,7 @@ export default function Home() {
                           </div>
 
                           <div className={styles.pageNumberWatermark}>
-                            Page {idx} of {MENU_DATA.length}
+                            Page {idx} of {menuData.length}
                             <div className={styles.swipeHint}>
                               [ Swipe Left for Next / Swipe Right for Prev ]
                             </div>
@@ -396,8 +435,8 @@ export default function Home() {
                         <div className={styles.bubbleArrow} />
                         <p className={styles.bubbleText}>
                           {selectedCount > 0 
-                            ? "Ahoy! I'm ready to take your orders, matey!" 
-                            : "Ahoy! Ye haven't added any delicacies to me deck yet!"
+                            ? "Ahoy! I&apos;m ready to take your orders, matey!" 
+                            : "Ahoy! Ye haven&apos;t added any delicacies to me deck yet!"
                           }
                         </p>
                       </div>
@@ -407,7 +446,7 @@ export default function Home() {
                       Your Order Details
                     </h3>
                     <div className={styles.detailsCoordinates}>
-                      MR. CARTER'S ACTIVE DELIVERIES
+                      MR. CARTER&apos;S ACTIVE DELIVERIES
                     </div>
 
                     <div className={styles.detailsList}>
@@ -539,7 +578,7 @@ export default function Home() {
                       Safe Harbor Reached!
                     </h2>
                     <p style={{ fontFamily: "var(--font-outfit)", fontStyle: "italic", fontSize: "0.85rem", color: "#614d3f", textAlign: "center", margin: "1rem 0 2rem 0", lineHeight: "1.5" }}>
-                      "Ahoy, matey! Me ship has safely docked. Yer delicacies have been delivered to yer coordinates. Enjoy the feast, and may fair winds follow ye!"
+                      &quot;Ahoy, matey! Me ship has safely docked. Yer delicacies have been delivered to yer coordinates. Enjoy the feast, and may fair winds follow ye!&quot;
                       <br/>
                       <strong style={{ color: "#3b2314", display: "block", marginTop: "0.5rem" }}>— Mr. Carter, Cart Captain</strong>
                     </p>

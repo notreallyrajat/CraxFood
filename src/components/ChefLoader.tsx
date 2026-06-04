@@ -24,11 +24,12 @@ export default function ChefLoader({ onComplete, duration = 3500 }: ChefLoaderPr
   const [messageIndex, setMessageIndex] = useState(0);
   const [textOpacity, setTextOpacity] = useState(1);
 
-  const startTimeRef = React.useRef(Date.now());
+  const startTimeRef = React.useRef(0);
   const onCompleteRef = React.useRef(onComplete);
 
   useEffect(() => {
     onCompleteRef.current = onComplete;
+    startTimeRef.current = Date.now();
   }, [onComplete]);
 
   useEffect(() => {
