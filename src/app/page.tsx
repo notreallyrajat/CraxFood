@@ -96,11 +96,12 @@ export default function Home() {
     async function fetchMenu() {
       // In a real multi-tenant app, you would read the restaurant ID from the URL (e.g. /menu/[restaurant_id])
       // For this demo, we just fetch all available dishes from the database.
-      const { data, error } = await supabase.from('dishes').select('*').eq('is_available', true);
+      const { data } = await supabase.from('dishes').select('*').eq('is_available', true);
       
       if (data && data.length > 0) {
         // Group items by category
-        const grouped = data.reduce((acc: Record<string, any[]>, dish: Record<string, any>) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const grouped = data.reduce((acc: Record<string, any[]>, dish: any) => {
           const cat = dish.category || 'Chef Specials';
           if (!acc[cat]) acc[cat] = [];
           acc[cat].push({
@@ -340,6 +341,7 @@ export default function Home() {
                           </div>
 
                           <div className={styles.menuList}>
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                             {menuData[idx - 1].items.map((item: any) => {
                               const isChecked = !!cart[item.id];
                               return (
@@ -348,7 +350,7 @@ export default function Home() {
                                   className={`${styles.menuListItem} ${
                                     isChecked ? styles.selectedItem : ""
                                   }`}
-                                  onClick={(e) => {
+                                  onClick={() => {
                                     if (isDragging.current) return;
                                     toggleItem(item.id);
                                   }}
