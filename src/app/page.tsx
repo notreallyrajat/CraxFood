@@ -103,6 +103,7 @@ export default function Home() {
   const [pointsUsed, setPointsUsed] = useState<number>(0);
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   const [show3DModel, setShow3DModel] = useState<boolean>(false);
+  const [isMindAR, setIsMindAR] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchMenu() {
@@ -1048,9 +1049,21 @@ export default function Home() {
                     <div className={`${styles.cornerDecor} ${styles.bottomLeft}`} />
                     <div className={`${styles.cornerDecor} ${styles.bottomRight}`} />
                     
+                    <div style={{ position: "absolute", top: "1rem", left: "1rem", zIndex: 10, display: "flex", gap: "10px" }}>
+                      <button 
+                        onClick={() => setIsMindAR(!isMindAR)}
+                        style={{ padding: "0.5rem 1rem", background: "#5c3d21", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold", fontFamily: "var(--font-outfit)" }}
+                      >
+                        {isMindAR ? "Back to 3D View" : "Universal AR (Older Devices)"}
+                      </button>
+                    </div>
+
                     <button 
                       className={styles.closeImageBtn}
-                      onClick={() => setShow3DModel(false)}
+                      onClick={() => {
+                        setShow3DModel(false);
+                        setIsMindAR(false);
+                      }}
                       style={{ zIndex: 10 }}
                     >
                       <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -1059,17 +1072,25 @@ export default function Home() {
                       </svg>
                     </button>
                     
-                    <div className={styles.imagePreviewContainer} style={{ flex: 1, width: "100%", display: "flex", justifyContent: "center", minHeight: 0 }}>
-                      {React.createElement("model-viewer", {
-                        src: "/Untitled.glb",
-                        "camera-controls": true,
-                        "auto-rotate": true,
-                        ar: true,
-                        "ar-modes": "webxr scene-viewer quick-look",
-                        "ar-scale": "auto",
-                        "shadow-intensity": "1",
-                        style: { width: "100%", height: "100%", outline: "none", backgroundColor: "transparent" }
-                      })}
+                    <div className={styles.imagePreviewContainer} style={{ flex: 1, width: "100%", display: "flex", justifyContent: "center", minHeight: 0, position: "relative" }}>
+                      {isMindAR ? (
+                        <iframe 
+                          src="/mindar.html" 
+                          style={{ width: "100%", height: "100%", border: "none", borderRadius: "8px" }}
+                          allow="camera; gyroscope; accelerometer; magnetometer"
+                        />
+                      ) : (
+                        React.createElement("model-viewer", {
+                          src: "/Untitled.glb",
+                          "camera-controls": true,
+                          "auto-rotate": true,
+                          ar: true,
+                          "ar-modes": "webxr scene-viewer quick-look",
+                          "ar-scale": "auto",
+                          "shadow-intensity": "1",
+                          style: { width: "100%", height: "100%", outline: "none", backgroundColor: "transparent" }
+                        })
+                      )}
                     </div>
                   </div>
                 </div>
