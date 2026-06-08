@@ -915,3 +915,252 @@
   text-shadow: 0 1px 1px rgba(255,255,255,0.8);
   border: 1px solid rgba(92, 61, 33, 0.2);
 }
+
+/* Image Preview Modal */
+.imageModal {
+  background: #fdfaf2;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(253, 250, 242, 0.95) 0%, rgba(230, 214, 184, 0.9) 100%);
+  border: 2px solid #5c3d21;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 60px rgba(92, 61, 33, 0.25);
+  border-radius: 6px;
+  width: 100%;
+  max-width: 500px;
+  padding: 1rem;
+  position: relative;
+}
+
+.closeImageBtn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1.5px solid #5c3d21;
+  color: #5c3d21;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.closeImageBtn:hover {
+  background: #5c3d21;
+  color: #fdfaf2;
+}
+
+.imagePreviewContainer {
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 2px solid rgba(92, 61, 33, 0.3);
+  background: #120b05;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 1 / 1;
+}
+
+.dishPreviewImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.dishPreviewImg:hover {
+  transform: scale(1.05);
+}
+
+.eyeIconBtn {
+  background: none;
+  border: none;
+  color: #ba6f1b;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+}
+
+.eyeIconBtn:hover {
+  opacity: 1;
+  color: #5c3d21;
+  background: rgba(92, 61, 33, 0.1);
+}
+
+/* Waiting for Kitchen Animation */
+.waitingOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(18, 11, 5, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.waitingContent {
+  background: #fdfaf2;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(253, 250, 242, 0.95) 0%, rgba(230, 214, 184, 0.9) 100%);
+  padding: 3rem 4rem;
+  border-radius: 8px;
+  border: 2px solid #5c3d21;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 60px rgba(92, 61, 33, 0.25);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.compassWrapper {
+  width: 120px;
+  height: 120px;
+  animation: gentlePulse 2s infinite ease-in-out;
+}
+
+.spinningCompass {
+  width: 100%;
+  height: 100%;
+  animation: spinSmooth 4s infinite linear;
+}
+
+@keyframes spinSmooth {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes gentlePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Generating / Loading Ring */
+.pulseRing {
+  width: 80px;
+  height: 80px;
+  border: 4px solid rgba(92, 61, 33, 0.2);
+  border-top-color: #ba6f1b;
+  border-radius: 50%;
+  animation: spinSmooth 1s linear infinite;
+}
+
+/* Cooking Timeline Overlay */
+.cookingContent {
+  background: #fdfaf2;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(253, 250, 242, 0.95) 0%, rgba(230, 214, 184, 0.9) 100%);
+  padding: 3rem 4rem;
+  border-radius: 8px;
+  border: 2px solid #5c3d21;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 60px rgba(92, 61, 33, 0.25);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  max-width: 600px;
+}
+
+.chefHatWrapper {
+  width: 100px;
+  height: 100px;
+  animation: bobbingChef 2s ease-in-out infinite alternate;
+}
+
+@keyframes bobbingChef {
+  0% { transform: translateY(0) rotate(-5deg); }
+  100% { transform: translateY(-10px) rotate(5deg); }
+}
+
+.cookingTitle {
+  color: #5c3d21;
+  margin-top: 1.5rem;
+  font-family: serif;
+  font-size: 2rem;
+}
+
+.cookingSubtitle {
+  color: #ba6f1b;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  margin-bottom: 3rem;
+}
+
+.timelineContainer {
+  width: 100%;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.timelineTrack {
+  height: 6px;
+  background: rgba(92, 61, 33, 0.2);
+  border-radius: 4px;
+  position: relative;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.timelineFill {
+  height: 100%;
+  background: #ba6f1b;
+  width: 0%;
+  transition: width 1s linear;
+}
+
+.timelineStages {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: -32px;
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: rgba(92, 61, 33, 0.5);
+  transition: all 0.3s ease;
+  width: 25%;
+}
+
+.stage span {
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.stageDot {
+  width: 16px;
+  height: 16px;
+  background: #fdfaf2;
+  border: 3px solid rgba(92, 61, 33, 0.3);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.activeStage {
+  color: #5c3d21;
+}
+
+.activeStage .stageDot {
+  border-color: #ba6f1b;
+  background: #ba6f1b;
+  box-shadow: 0 0 10px rgba(186, 111, 27, 0.5);
+}

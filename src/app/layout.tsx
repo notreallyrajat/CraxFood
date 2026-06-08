@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit, Cinzel } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -17,6 +18,14 @@ export const metadata: Metadata = {
   description: "Experience premium dining delivered at hyper-speed. Handcrafted by 5-star chefs, delivered straight to your door.",
 };
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "model-viewer": any;
+    }
+  }
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,6 +35,7 @@ export default function RootLayout({
     <html lang="en" className={`${outfit.variable} ${cinzel.variable}`}>
       <body style={{ fontFamily: "var(--font-outfit), sans-serif" }}>
         {children}
+        <Script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" strategy="lazyOnload" />
       </body>
     </html>
   );
