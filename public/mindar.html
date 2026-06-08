@@ -49,17 +49,16 @@
         <a-light type="ambient" color="#ffffff" intensity="1.2"></a-light>
         <a-light type="directional" color="#ffffff" intensity="1.5" position="-1 2 1"></a-light>
 
-        <!-- Debug Box: If you see the red box but not your model, the issue is with the .glb scale/position -->
-        <a-box position="0 0 0" scale="0.5 0.5 0.5" material="color: red; opacity: 0.5;"></a-box>
-
-        <!-- We scale the model down slightly and rotate it so it sits flat on the image marker -->
-        <a-gltf-model 
-          rotation="0 0 0" 
-          position="0 0 0" 
-          scale="0.5 0.5 0.5" 
-          src="#dishModel" 
-          animation="property: rotation; to: 0 360 0; dur: 10000; easing: linear; loop: true"
-        ></a-gltf-model>
+        <!-- A wrapper entity to align the model so its bottom sits flat against the image -->
+        <!-- If the bowl is upside down, change rotation to "-90 0 0" -->
+        <a-entity rotation="90 0 0">
+          <a-gltf-model 
+            position="0 0 0" 
+            scale="0.5 0.5 0.5" 
+            src="#dishModel" 
+            animation="property: rotation; to: 0 360 0; dur: 10000; easing: linear; loop: true"
+          ></a-gltf-model>
+        </a-entity>
       </a-entity>
     </a-scene>
 
