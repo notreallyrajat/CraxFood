@@ -102,7 +102,7 @@ export default function Home() {
   const [availablePoints, setAvailablePoints] = useState<number | null>(null);
   const [pointsUsed, setPointsUsed] = useState<number>(0);
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
-  const [show3DModel, setShow3DModel] = useState<boolean>(false);
+  const [show3DModel, setShow3DModel] = useState<string | null>(null);
   const [isMindAR, setIsMindAR] = useState<boolean>(false);
 
   useEffect(() => {
@@ -542,7 +542,7 @@ export default function Home() {
                                       style={{ marginLeft: "8px" }}
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        setShow3DModel(true);
+                                        setShow3DModel((item as any).model_url || "/Untitled.glb");
                                       }}
                                       title="View 3D Model"
                                     >
@@ -1035,7 +1035,7 @@ export default function Home() {
             {show3DModel && (
               <div 
                 className={`${styles.detailsOverlay} fade-in`}
-                onClick={() => setShow3DModel(false)}
+                onClick={() => setShow3DModel(null)}
                 style={{ zIndex: 1000 }}
               >
                 <div 
@@ -1061,7 +1061,7 @@ export default function Home() {
                     <button 
                       className={styles.closeImageBtn}
                       onClick={() => {
-                        setShow3DModel(false);
+                        setShow3DModel(null);
                         setIsMindAR(false);
                       }}
                       style={{ zIndex: 10 }}
@@ -1075,13 +1075,13 @@ export default function Home() {
                     <div className={styles.imagePreviewContainer} style={{ flex: 1, width: "100%", display: "flex", justifyContent: "center", minHeight: 0, position: "relative" }}>
                       {isMindAR ? (
                         <iframe 
-                          src="/mindar.html" 
+                          src={`/mindar.html?model=${encodeURIComponent(show3DModel)}`}
                           style={{ width: "100%", height: "100%", border: "none", borderRadius: "8px" }}
                           allow="camera; gyroscope; accelerometer; magnetometer"
                         />
                       ) : (
                         React.createElement("model-viewer", {
-                          src: "/Untitled.glb",
+                          src: show3DModel,
                           "camera-controls": true,
                           "auto-rotate": true,
                           ar: true,

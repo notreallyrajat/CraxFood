@@ -17,6 +17,53 @@
       }
       .hidden { display: none !important; }
     </style>
+    <script>
+      // Component to allow touch rotation
+      AFRAME.registerComponent('touch-rotator', {
+        init: function () {
+          this.isDragging = false;
+          this.previousX = 0;
+          this.previousY = 0;
+
+          window.addEventListener('touchstart', (e) => {
+            this.isDragging = true;
+            this.previousX = e.touches[0].screenX;
+            this.previousY = e.touches[0].screenY;
+          });
+
+          window.addEventListener('touchend', () => {
+            this.isDragging = false;
+          });
+
+          window.addEventListener('touchmove', (e) => {
+            if (!this.isDragging) return;
+            const currentX = e.touches[0].screenX;
+            const currentY = e.touches[0].screenY;
+            const deltaX = currentX - this.previousX;
+            const deltaY = currentY - this.previousY;
+
+            this.previousX = currentX;
+            this.previousY = currentY;
+
+            const rotation = this.el.getAttribute('rotation');
+            
+            // Adjust sensitivity (0.5 is standard)
+            rotation.y += deltaX * 0.5;
+            rotation.x += deltaY * 0.5;
+
+            this.el.setAttribute('rotation', rotation);
+          });
+        }
+      });
+
+      // Dynamic Model Loader
+      document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const modelUrl = urlParams.get('model') || '/Untitled.glb';
+        const assetItem = document.getElementById('dishModel');
+        if (assetItem) assetItem.setAttribute('src', modelUrl);
+      });
+    </script>
   </head>
   <body>
     <div id="scanning-overlay">
@@ -53,10 +100,10 @@
         <!-- If the bowl is upside down, change rotation to "-90 0 0" -->
         <a-entity rotation="90 0 0">
           <a-gltf-model 
+            touch-rotator
             position="0 0 0" 
             scale="0.5 0.5 0.5" 
             src="#dishModel" 
-            animation="property: rotation; to: 0 360 0; dur: 10000; easing: linear; loop: true"
           ></a-gltf-model>
         </a-entity>
       </a-entity>
