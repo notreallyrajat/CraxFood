@@ -5,6 +5,7 @@ import ChefLoader from "../components/ChefLoader";
 import { supabase } from "../supabase";
 import styles from "./page.module.css";
 
+
 const FALLBACK_MENU_DATA = [
   {
     category: "Sweets & Confections",
@@ -113,11 +114,7 @@ export default function Home() {
       }
       setInventoryMap(iMap);
 
-      supabase.channel('public:inventory').on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, (payload: any) => {
-         if (payload.eventType === 'UPDATE' || payload.eventType === 'INSERT') {
-            setInventoryMap(prev => ({ ...prev, [payload.new.id]: payload.new.quantity }));
-         }
-      }).subscribe();
+
 
       // In a real multi-tenant app, you would read the restaurant ID from the URL (e.g. /menu/[restaurant_id])
       // For this demo, we just fetch all available dishes from the database.
@@ -157,6 +154,17 @@ export default function Home() {
       setIsLoading(false);
     }
     fetchMenu();
+
+    const invChannel = supabase.channel(`public:inventory-${Date.now()}`);
+    invChannel.on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, (payload: any) => {
+       if (payload.eventType === 'UPDATE' || payload.eventType === 'INSERT') {
+          setInventoryMap(prev => ({ ...prev, [payload.new.id]: payload.new.quantity }));
+       }
+    }).subscribe();
+
+    return () => {
+      supabase.removeChannel(invChannel);
+    };
   }, []);
 
   // Drag/Swipe coordinates refs
@@ -181,7 +189,7 @@ export default function Home() {
   const selectedItemsList = Object.keys(cart).map((id) => {
     let foundItem: any = null;
     for (const cat of menuData) {
-      const match = cat.items.find((i) => i.id === id);
+      const match = cat.items.find((i: any) => i.id === id);
       if (match) foundItem = match;
     }
     if (!foundItem) return null;
@@ -227,7 +235,7 @@ export default function Home() {
       ingredients: multipliedIngredients,
       selected_extras: cartData.extras
     };
-  }).filter(Boolean);
+  }).filter(Boolean) as any[];
 
   const totalPrice = selectedItemsList.reduce((sum, item: any) => sum + item.price, 0);
 
@@ -1051,12 +1059,12 @@ export default function Home() {
                     </button>
                     
                     <div className={styles.imagePreviewContainer} style={{ flex: 1, width: "100%", display: "flex", justifyContent: "center" }}>
-                      <model-viewer
-                        src="/Untitled.glb"
-                        camera-controls
-                        auto-rotate
-                        style={{ width: "100%", height: "100%", minHeight: "350px", outline: "none", backgroundColor: "transparent" }}
-                      ></model-viewer>
+                      {React.createElement("model-viewer", {
+                        src: "/Untitled.glb",
+                        "camera-controls": true,
+                        "auto-rotate": true,
+                        style: { width: "100%", height: "100%", minHeight: "350px", outline: "none", backgroundColor: "transparent" }
+                      })}
                     </div>
                   </div>
                 </div>

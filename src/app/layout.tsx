@@ -18,13 +18,6 @@ export const metadata: Metadata = {
   description: "Experience premium dining delivered at hyper-speed. Handcrafted by 5-star chefs, delivered straight to your door.",
 };
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      "model-viewer": any;
-    }
-  }
-}
 
 export default function RootLayout({
   children,
