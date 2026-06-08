@@ -1039,10 +1039,10 @@ export default function Home() {
               >
                 <div 
                   className={styles.imageModal}
-                  style={{ width: '90%', maxWidth: '600px' }}
+                  style={{ width: '95vw', height: '90vh', maxWidth: '1200px', maxHeight: '1000px', display: 'flex', flexDirection: 'column' }}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className={styles.detailsBorder} style={{ padding: "1rem", display: "flex", flexDirection: "column", alignItems: "center", position: "relative", width: "100%", height: "100%", minHeight: "400px" }}>
+                  <div className={styles.detailsBorder} style={{ padding: "1rem", display: "flex", flexDirection: "column", alignItems: "center", position: "relative", width: "100%", height: "100%", flex: 1 }}>
                     <div className={`${styles.cornerDecor} ${styles.topLeft}`} />
                     <div className={`${styles.cornerDecor} ${styles.topRight}`} />
                     <div className={`${styles.cornerDecor} ${styles.bottomLeft}`} />
@@ -1051,6 +1051,7 @@ export default function Home() {
                     <button 
                       className={styles.closeImageBtn}
                       onClick={() => setShow3DModel(false)}
+                      style={{ zIndex: 10 }}
                     >
                       <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -1058,12 +1059,16 @@ export default function Home() {
                       </svg>
                     </button>
                     
-                    <div className={styles.imagePreviewContainer} style={{ flex: 1, width: "100%", display: "flex", justifyContent: "center" }}>
+                    <div className={styles.imagePreviewContainer} style={{ flex: 1, width: "100%", display: "flex", justifyContent: "center", minHeight: 0 }}>
                       {React.createElement("model-viewer", {
                         src: "/Untitled.glb",
                         "camera-controls": true,
                         "auto-rotate": true,
-                        style: { width: "100%", height: "100%", minHeight: "350px", outline: "none", backgroundColor: "transparent" }
+                        ar: true,
+                        "ar-modes": "webxr scene-viewer quick-look",
+                        "ar-scale": "auto",
+                        "shadow-intensity": "1",
+                        style: { width: "100%", height: "100%", outline: "none", backgroundColor: "transparent" }
                       })}
                     </div>
                   </div>
